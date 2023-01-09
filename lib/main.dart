@@ -41,6 +41,15 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         elevation: 0,
         title: const Text("List of employees"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const AddData()));
+            },
+          )
+        ],
       ),
       body: Container(
         padding: const EdgeInsets.all(10),
@@ -64,13 +73,11 @@ class _MyHomePageState extends State<MyHomePage> {
               return ListView.builder(
                 itemCount: docs.length,
                 itemBuilder: (context, index) {
-                  
                   String yes = docs[index]["Service Year"];
                   final double ok = double.parse(yes);
                   return Container(
                     margin: const EdgeInsets.only(bottom: 10),
                     decoration: BoxDecoration(
-                      
                       color: Colors.lightBlue.shade100.withOpacity(0.6),
                       borderRadius: BorderRadius.circular(5),
                     ),
@@ -83,7 +90,6 @@ class _MyHomePageState extends State<MyHomePage> {
                             onPressed: () {}),
                         title: Text(
                           "Employee Name : ${docs[index]["Name"]}",
-                          
                         ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,8 +97,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             const SizedBox(
                               height: 5,
                             ),
-                            Text("Designation : ${docs[index]["Designation"]}",
-                            style: const TextStyle(color: Colors.black),
+                            Text(
+                              "Designation : ${docs[index]["Designation"]}",
+                              style: const TextStyle(color: Colors.black),
                             ),
                             const SizedBox(
                               height: 5,
@@ -113,13 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.blue,
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const AddData()));
-          },
-          child: const Icon(Icons.add, color: Colors.white)),
+      
     );
   }
 }

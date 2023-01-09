@@ -10,10 +10,21 @@ class AddData extends StatefulWidget {
 }
 
 class _AddDataState extends State<AddData> {
- 
-  TextEditingController nameController = TextEditingController();
-  TextEditingController serviceController = TextEditingController();
-  TextEditingController designationController = TextEditingController();
+ final formKey = GlobalKey<FormState>();
+  var nameController ;
+  var serviceController ;
+  var designationController ;
+  
+  startauthentication() {
+    
+    final validity = formKey.currentState!.validate();
+    FocusScope.of(context).unfocus();
+
+    if (validity) {
+      formKey.currentState!.save();
+      addtasktofirebase();
+    }
+  }
   addtasktofirebase() async {
     
     await FirebaseFirestore.instance
@@ -22,9 +33,9 @@ class _AddDataState extends State<AddData> {
         .collection("All")
         .doc(DateTime.now().toString())
         .set({
-      'Name': nameController.text,
-      'Service Year': serviceController.text,
-      'Designation':designationController.text
+      'Name': nameController,
+      'Service Year': serviceController,
+      'Designation':designationController
     }).then((value) => Navigator.pop(context));
    
     
@@ -36,59 +47,89 @@ class _AddDataState extends State<AddData> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+      
         elevation: 0,
         title: const Text("Add employee details"),
       ),
-      body: Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              SizedBox(
-                child: TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(
-                      labelText: 'Enter Employee Name',
-                      border: OutlineInputBorder()),
-                ),
-              ),
-              const SizedBox(height: 10),
-              SizedBox(
-                child: TextField(
-                  controller: designationController,
-                  decoration: const InputDecoration(
-                      labelText: 'Enter Designation',
-                      border: OutlineInputBorder()),
-                ),
-              ),
-              const SizedBox(height: 15),
-              SizedBox(
-                child: TextField(
-                  keyboardType:TextInputType.number ,
-                  controller: serviceController,
-                  decoration: const InputDecoration(
-                      labelText: 'Enter Service Years',
-                      border: OutlineInputBorder()),
-                ),
-              ),
-              const SizedBox(height: 15),
-              SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                          Theme.of(context).primaryColor),
-                    ),
-                    child: const Text(
-                      'Add Data',
-                    ),
-                    onPressed: () {
-                      addtasktofirebase();
+      body: SingleChildScrollView(
+        child: Container(
+            padding: const EdgeInsets.all(20),
+            child: Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  SizedBox(
+                    child: TextFormField(
+                      onSaved: (newValue) {
+                        nameController = newValue!;
+                      },
+                      validator: (value) {
+                        if(value!.isEmpty){
+                          return "Name cannot be empty";
+                        }
+                        },
                      
-                    },
-                  ),),
-            ],
-          )),
+                      decoration: const InputDecoration(
+                          labelText: 'Enter Employee Name',
+                          border: OutlineInputBorder()),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    child: TextFormField(
+                      onSaved: (newValue) {
+                        designationController = newValue!;
+                      },
+                      validator: (value) {
+                        if(value!.isEmpty){
+                          return "Designation cannot be empty";
+                        }
+                      },
+                 
+                      decoration: const InputDecoration(
+                          labelText: 'Enter Designation',
+                          border: OutlineInputBorder()),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  SizedBox(
+                    child: TextFormField(
+                      onSaved: (newValue) {
+                        serviceController = newValue!;
+                      },
+                      validator: (value) {
+                        if(value!.isEmpty ){
+                          return "Enter a valid number";
+                        }
+                      },
+                      keyboardType:TextInputType.number ,
+               
+                      decoration: const InputDecoration(
+                          labelText: 'Enter Service Years',
+                          border: OutlineInputBorder()),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              Theme.of(context).primaryColor),
+                        ),
+                        child: const Text(
+                          'Add Data',
+                        ),
+                        onPressed: () {
+                          startauthentication();
+                         
+                        },
+                      ),),
+                ],
+              ),
+            )),
+      ),
     );
   }
 }
